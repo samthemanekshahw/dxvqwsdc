@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Embedded Movie Site</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 10000;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+    }
+    .nav {
+      display: flex;
+      gap: 20px;
+    }
+    .nav a {
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .iframe-container {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+      background: black;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Fullscreen styling for the container and iframe */
+    /* Standard */
+    .iframe-container:fullscreen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
+    }
+    .iframe-container:fullscreen iframe {
+      width: 100vw;
+      height: auto;
+      max-height: 100vh;
+    }
+    /* Webkit */
+    .iframe-container:-webkit-full-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
+    }
+    .iframe-container:-webkit-full-screen iframe {
+      width: 100vw;
+      height: auto;
+      max-height: 100vh;
+    }
+    /* Mozilla */
+    .iframe-container:-moz-full-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
+    }
+    .iframe-container:-moz-full-screen iframe {
+      width: 100vw;
+      height: auto;
+      max-height: 100vh;
+    }
+  </style>
+  <script>
+    function openInIframe(url) {
+      const iframe = document.getElementById('movieFrame');
+      iframe.src = url;
+      // Update the URL in the address bar (simulation)
+      history.pushState(null, '', '/' + url.split('.vercel.app/')[1]);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelector('.logo').addEventListener('click', function () {
+        openInIframe('https://primeflix-web.vercel.app/');
+      });
+      document.querySelector('.nav a:nth-child(1)').addEventListener('click', function (event) {
+        event.preventDefault();
+        openInIframe('https://primeflix-web.vercel.app/');
+      });
+      document.querySelector('.nav a:nth-child(2)').addEventListener('click', function (event) {
+        event.preventDefault();
+        openInIframe('https://primeflix-web.vercel.app/movie');
+      });
+      document.querySelector('.nav a:nth-child(3)').addEventListener('click', function (event) {
+        event.preventDefault();
+        openInIframe('https://primeflix-web.vercel.app/tv');
+      });
+
+      // Try to synchronize the iframe's URL with the parent (works only for same-origin pages)
+      const iframe = document.getElementById('movieFrame');
+      iframe.addEventListener('load', function () {
+        try {
+          const iframePath = iframe.contentWindow.location.pathname;
+          history.replaceState(null, '', iframePath);
+        } catch (e) {
+          // Cross-origin restrictions; ignore errors.
+        }
+      });
+
+      // Handle browser back/forward buttons
+      window.addEventListener('popstate', function () {
+        const currentPath = location.pathname;
+        openInIframe('https://primeflix-web.vercel.app' + currentPath);
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">ERYNITH</div>
+    <div class="nav">
+      <a href="#">HOME</a>
+      <a href="#">MOVIES</a>
+      <a href="#">TV SHOWS</a>
+    </div>
+  </div>
+  <div class="iframe-container">
+    <iframe 
+      src="https://primeflix-web.vercel.app/" 
+      id="movieFrame" 
+      allowfullscreen
+    ></iframe>
+  </div>
+</body>
+</html>
